@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -g
-LDFLAGS = -lpthread -lnsl -lrt -lsocket
+LDFLAGS = -lpthread -lnsl -lrt 
 
 OBJS = nethelp.o echoserver.o echoservert.o echoclient.o 
 
@@ -19,13 +19,13 @@ echoclient.o: echoclient.c
 	$(CC) $(CFLAGS) -c echoclient.c
 
 echoserver: echoserver.o nethelp.o
-	$(CC) $(LDFLAGS) -o $@ echoserver.o nethelp.o
+	$(CC)  -o $@ echoserver.o nethelp.o $(LDFLAGS)
 
 echoservert: echoservert.o nethelp.o
-	$(CC) $(LDFLAGS) -o $@ echoservert.o nethelp.o
+	$(CC)  -o $@ echoservert.o nethelp.o $(LDFLAGS)
 
 echoclient: echoclient.o nethelp.o
-	$(CC) $(LDFLAGS) -o $@ echoclient.o nethelp.o
+	$(CC)  -o $@ echoclient.o nethelp.o $(LDFLAGS)
 
 clean:
 	rm -f echoserver echoservert echoclient *.o *~ core
