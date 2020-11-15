@@ -1,0 +1,1 @@
+int apply_filter(char *filename);

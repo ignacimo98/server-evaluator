@@ -1,0 +1,10 @@
+maze
+bin
+obj
+.DS_Store
+.vscode
+__pycache__
+*.bin
+BORRAR.c
+.vscode
+

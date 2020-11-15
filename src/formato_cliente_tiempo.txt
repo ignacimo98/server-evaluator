@@ -1,0 +1,2 @@
+binary:
+int num_threads, int num_ciclos, int tiempo_total, int tiempo_promedio
