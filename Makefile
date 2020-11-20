@@ -6,12 +6,14 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 EXE_SERVER := $(BIN_DIR)/echoserver
-EXE_SERVERT := $(BIN_DIR)/echoservert
+EXE_SERVERT := $(BIN_DIR)/servert
 EXE_CLIENT := $(BIN_DIR)/echoclient
 
-OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o, $(OBJ))
-OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o, $(OBJ))
-OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o, $(OBJ))
+# OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/servert.o, $(OBJ))
+OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o, $(OBJ))
+OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o, $(OBJ))
+OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o, $(OBJ)) 
+
 
 CPPFLAGS := -Iinclude -MMD -MP
 CFLAGS   := -Wall -g
