@@ -10,11 +10,12 @@ EXE_SERVERT := $(BIN_DIR)/servert
 EXE_CLIENT := $(BIN_DIR)/echoclient
 
 # OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
-OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
+# OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 # OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 
-OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/test_client.o, $(OBJ)) 
-OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/echoclient.o, $(OBJ))
+OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/test_client.o $(OBJ_DIR)/server.o, $(OBJ)) 
+OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/server.o, $(OBJ))
+OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o,  $(OBJ))
 
 
 CPPFLAGS := -Iinclude -MMD -MP
