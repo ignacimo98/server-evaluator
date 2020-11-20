@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #include <libgen.h>
 
-#define PORT_NUMBER 5000
+#define PORT_NUMBER 9097
 #define SERVER_ADDRESS "192.168.1.7"
 #define FILE_NAME_SIZE 256
 
@@ -20,7 +20,7 @@ int sendfile(int fp, int sockfd);
 int main(int argc, char **argv)
 {
     int client_socket;
-    ssize_t len;
+    // ssize_t len;
     struct sockaddr_in remote_addr;
     char filename[FILE_NAME_SIZE];
     int image_file;
@@ -66,13 +66,13 @@ int main(int argc, char **argv)
 
     // sprintf(filename, "%s", basename(FILENAME));
 
-    if ((len = send(client_socket, basename(filename), FILE_NAME_SIZE, 0)) < 0)
-    {
-        fprintf(stderr, "Error on sending filename --> %s", strerror(errno));
-        close(client_socket);
-        close(image_file);
-        exit(EXIT_FAILURE);
-    }
+    // if ((len = send(client_socket, basename(filename), FILE_NAME_SIZE, 0)) < 0)
+    // {
+    //     fprintf(stderr, "Error on sending filename --> %s", strerror(errno));
+    //     close(client_socket);
+    //     close(image_file);
+    //     exit(EXIT_FAILURE);
+    // }
 
     /* Send image file */
 

@@ -10,7 +10,7 @@
 #include <pthread.h>
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "../received_images/"
+#define IMAGE_FOLDER "./received_images/"
 
 static int image_count = 0;
 
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 void *thread(void *vargp)
 {
     int connfd = *((int *)vargp);
-    pthread_detach(pthread_self());
+    // pthread_detach(pthread_self());
     free(vargp);
     // echo(connfd);
     receive_save_image(connfd);
@@ -63,9 +63,9 @@ void receive_save_image(int connfd)
     char buf[MAXLINE];
     FILE *image;
     char file_name[FILE_NAME_SIZE];
-    char count[5];
+    char count[3];
     memset(file_name, 0, FILE_NAME_SIZE);
-    memset(count, 0, 5);
+    memset(count, 0, 3);
 
     strcat(file_name, IMAGE_FOLDER);
     sprintf(count, "%d", image_count);
@@ -81,7 +81,8 @@ void receive_save_image(int connfd)
 
     ++image_count;
 
-    while ((n = readline(connfd, buf, MAXLINE)) != 0)
+    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
+    // while ((n = readline(connfd, buf, MAXLINE)) != 0)
     {
         printf("server received %ld bytes\n", n);
         // fwrite(image,n,)
@@ -92,5 +93,5 @@ void receive_save_image(int connfd)
     fclose(image);
 
     apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel");
+    printf("thread terminó de hacer filtro sobel\n");
 }
