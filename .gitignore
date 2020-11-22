@@ -6,3 +6,5 @@ obj
 __pycache__
 *.bin
 BORRAR.c
+.vscode
+

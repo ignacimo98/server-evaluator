@@ -24,13 +24,13 @@ all: $(EXE_CLIENT) $(EXE_SERVER) $(EXE_SERVERT)
 
 
 $(EXE_CLIENT): $(OBJ_CLIENT) | $(BIN_DIR)
-		$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
 
 $(EXE_SERVER): $(OBJ_SERVER) | $(BIN_DIR)
-		$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
 
 $(EXE_SERVERT): $(OBJ_SERVERT) | $(BIN_DIR)
-		$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 		$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
