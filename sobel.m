@@ -25,4 +25,4 @@ endif
 
 E = sqrt(D1.^2+D2.^2);
 
-imwrite(uint8(E), args{2});
+imwrite(uint8(E), args{1});
