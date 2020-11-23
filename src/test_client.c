@@ -10,12 +10,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <libgen.h>
+#include <pthread.h>
+#include "../include/nethelp.h"
 
-#define PORT_NUMBER 9097
+#define PORT_NUMBER 5000
 #define SERVER_ADDRESS "192.168.1.7"
 #define FILE_NAME_SIZE 256
 
-int sendfile(int fp, int sockfd);
+int send_file(int fp, int sockfd, int filesize);
 
 int main(int argc, char **argv)
 {
@@ -55,6 +57,7 @@ int main(int argc, char **argv)
     printf("Escriba el nombre de la imagen a enviar: ");
     scanf("%s", filename);
 
+
     if ((image_file = open(filename, O_RDONLY)) == -1)
     {
         fprintf(stderr, "Error opening image file --> %s\n", strerror(errno));
@@ -62,32 +65,66 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    /* Send filename */
+    // Get the file size
+    struct stat st;
+    stat(filename, &st);
+    int filesize = st.st_size;
+    printf("Size of file is %d \n",filesize);
 
-    // sprintf(filename, "%s", basename(FILENAME));
-
-    // if ((len = send(client_socket, basename(filename), FILE_NAME_SIZE, 0)) < 0)
-    // {
-    //     fprintf(stderr, "Error on sending filename --> %s", strerror(errno));
-    //     close(client_socket);
-    //     close(image_file);
-    //     exit(EXIT_FAILURE);
-    // }
-
-    /* Send image file */
-
-    sendfile(image_file, client_socket);
+    send_file(image_file, client_socket, filesize);
 
     close(image_file);
+    
+//*********** ESPERA RESPUESTA DEL SERVIDOR
+    printf("Imagen enviada, esperando respuesta...\n");
+    char done [MAXLINE];
+    strcpy(done, "done");
+    while(1);
+    // size_t n;
+    // char buf [MAXLINE];
+    // char done [MAXLINE];
+    // strcpy(done, "done");
+    // while((n = recv(client_socket, buf, MAXLINE, 0)) > 0){
+    //     if (strcmp(buf, done) == 0){
+    //         printf("RESPUESTA RECIBIDA\n");
+    //         break;
+    //     }
+    // }
+    
+//***********
+
     close(client_socket);
 }
 
 // sends a file that is already opened to a socket that is already opened
-int sendfile(int fp, int sockfd)
+int send_file(int fp, int sockfd, int filesize)
 {
-    int n, total;
+    
+
+    int n, total = 0;
     char sendline[256] = {0};
 
+
+   
+   // Send image size
+    int data = filesize;
+    char* tosend = (char*)&data;
+    int remaining = sizeof(data);
+    int result = 0;
+    int sent = 0;
+    while (remaining > 0) {
+        result = send(sockfd, tosend+sent, remaining, 0);
+        if (result > 0) {
+            remaining -= result;
+            sent += remaining;
+        }
+        else if (result < 0) {
+            printf("ERROR sending the image size\n");
+            break;
+        }
+    }
+
+    //Send Image 
     while ((n = read(fp, sendline, 256)) > 0)
     {
         total += n;
@@ -101,5 +138,7 @@ int sendfile(int fp, int sockfd)
         }
         memset(sendline, 0, 256);
     }
+
+
     return total;
 }

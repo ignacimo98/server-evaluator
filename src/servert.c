@@ -50,6 +50,25 @@ void *thread(void *vargp)
     free(vargp);
     // echo(connfd);
     receive_save_image(connfd);
+
+
+
+//************* RESPUESTA DE PRUEBA AL CLIENTE
+  
+    // char buf [MAXLINE];
+    // strcpy(buf, "done");
+    // if (send(connfd,buf,MAXLINE,0) == -1)
+    //     {
+    //         perror("Can't send done flag to client");
+    //         close(connfd);
+    //         exit(1);
+    //     }
+    // printf("RESPUESTA ENVIADA\n");
+
+   
+//********************************************
+
+
     close(connfd);
     return NULL;
 }
@@ -60,6 +79,7 @@ void *thread(void *vargp)
 void receive_save_image(int connfd)
 {
     size_t n;
+    int total = 0;
     char buf[MAXLINE];
     FILE *image;
     char file_name[FILE_NAME_SIZE];
@@ -81,15 +101,40 @@ void receive_save_image(int connfd)
 
     ++image_count;
 
-    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
-    // while ((n = readline(connfd, buf, MAXLINE)) != 0)
-    {
-        printf("server received %ld bytes\n", n);
-        // fwrite(image,n,)
-        fwrite(buf, 1, n, image);
-        // write(image, buf, n);
+    int value = 0;
+    char* recv_buffer = (char*)&value;
+    int remaining = sizeof(int);
+    int received = 0;
+    int result = 0;
+    while (remaining > 0) {
+        result = recv(connfd, recv_buffer+received, remaining, 0);
+        if (result > 0) {
+            remaining -= result;
+            received += result;
+        }
+        else if (result == 0) {
+            printf("Remote side closed his end of the connection before all data was received\n");
+            break;
+        }
+        else if (result < 0) {
+            printf("Error receiving the image size\n");
+            break;
+        }
     }
+    printf("Image size received: %d\n", value);
 
+    //Receive Image from Client 
+    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
+    {   
+        total+=n;
+        printf("server received %ld bytes, total is %d vs %d\n", n,total,value);
+        fwrite(buf, 1, n, image);
+        if (total >= value){
+            printf("Imagen recibida\n");
+            break;
+        }
+    }
+    
     fclose(image);
 
     apply_filter(file_name);
