@@ -18,6 +18,7 @@
 #define FILE_NAME_SIZE 256
 
 int send_file(int fp, int sockfd, int filesize);
+void wait_server_response(int client_socket);
 
 int main(int argc, char **argv)
 {
@@ -75,43 +76,22 @@ int main(int argc, char **argv)
 
     close(image_file);
     
-//*********** ESPERA RESPUESTA DEL SERVIDOR
-    printf("Imagen enviada, esperando respuesta...\n");
-    char done [MAXLINE];
-    strcpy(done, "done");
-    while(1);
-    // size_t n;
-    // char buf [MAXLINE];
-    // char done [MAXLINE];
-    // strcpy(done, "done");
-    // while((n = recv(client_socket, buf, MAXLINE, 0)) > 0){
-    //     if (strcmp(buf, done) == 0){
-    //         printf("RESPUESTA RECIBIDA\n");
-    //         break;
-    //     }
-    // }
-    
-//***********
+    wait_server_response(client_socket);
+
 
     close(client_socket);
 }
 
-// sends a file that is already opened to a socket that is already opened
+//  Send the file to the server
 int send_file(int fp, int sockfd, int filesize)
 {
-    
-
     int n, total = 0;
     char sendline[256] = {0};
-
-
-   
-   // Send image size
-    int data = filesize;
-    char* tosend = (char*)&data;
-    int remaining = sizeof(data);
+    char* tosend = (char*)&filesize;
+    int remaining = sizeof(filesize);
     int result = 0;
     int sent = 0;
+    //  Send image size to server
     while (remaining > 0) {
         result = send(sockfd, tosend+sent, remaining, 0);
         if (result > 0) {
@@ -124,11 +104,10 @@ int send_file(int fp, int sockfd, int filesize)
         }
     }
 
-    //Send Image 
+    //  Send Image to server
     while ((n = read(fp, sendline, 256)) > 0)
     {
         total += n;
-
         if (send(sockfd, sendline, n, 0) == -1)
         {
             perror("Can't send file");
@@ -138,7 +117,18 @@ int send_file(int fp, int sockfd, int filesize)
         }
         memset(sendline, 0, 256);
     }
-
-
     return total;
+}
+
+void wait_server_response(int client_socket){
+    size_t n;
+    char buf [5];
+    char done [5];
+    strcpy(done, "done");
+    while((n = recv(client_socket, buf, 5, 0)) > 0){
+        if (strcmp(buf, done) == 0){
+            printf("RESPUESTA RECIBIDA\n");
+            break;
+        }
+    }
 }

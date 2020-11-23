@@ -55,15 +55,15 @@ void *thread(void *vargp)
 
 //************* RESPUESTA DE PRUEBA AL CLIENTE
   
-    // char buf [MAXLINE];
-    // strcpy(buf, "done");
-    // if (send(connfd,buf,MAXLINE,0) == -1)
-    //     {
-    //         perror("Can't send done flag to client");
-    //         close(connfd);
-    //         exit(1);
-    //     }
-    // printf("RESPUESTA ENVIADA\n");
+    char buf [5];
+    strcpy(buf, "done");
+    if (send(connfd,buf,5,0) == -1)
+        {
+            perror("Can't send done flag to client");
+            close(connfd);
+            exit(1);
+        }
+    printf("Response sent, socked finished\n");
 
    
 //********************************************
@@ -127,10 +127,10 @@ void receive_save_image(int connfd)
     while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
     {   
         total+=n;
-        printf("server received %ld bytes, total is %d vs %d\n", n,total,value);
+        printf("Server received %ld bytes, total is %d\n", n,total);
         fwrite(buf, 1, n, image);
         if (total >= value){
-            printf("Imagen recibida\n");
+            printf("Image is here\n");
             break;
         }
     }
