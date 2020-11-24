@@ -15,7 +15,7 @@
 #define SERVER_ADDRESS "192.168.1.7"
 #define FILE_NAME_SIZE 256
 
-int sendfile(int fp, int sockfd);
+int send_file(int fp, int sockfd);
 
 int main(int argc, char **argv)
 {
@@ -76,14 +76,14 @@ int main(int argc, char **argv)
 
     /* Send image file */
 
-    sendfile(image_file, client_socket);
+    send_file(image_file, client_socket);
 
     close(image_file);
     close(client_socket);
 }
 
 // sends a file that is already opened to a socket that is already opened
-int sendfile(int fp, int sockfd)
+int send_file(int fp, int sockfd)
 {
     int n, total;
     char sendline[256] = {0};

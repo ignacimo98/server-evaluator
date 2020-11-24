@@ -7,15 +7,17 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 EXE_SERVER := $(BIN_DIR)/echoserver
 EXE_SERVERT := $(BIN_DIR)/servert
+EXE_SERVERPT := $(BIN_DIR)/serverpt
 EXE_CLIENT := $(BIN_DIR)/echoclient
 
 # OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 # OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 # OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 
-OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/test_client.o $(OBJ_DIR)/server.o, $(OBJ)) 
-OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/server.o, $(OBJ))
-OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o,  $(OBJ))
+OBJ_SERVERPT := $(filter-out  $(OBJ_DIR)/test_client.o $(OBJ_DIR)/server.o $(OBJ_DIR)/servert.o, $(OBJ)) 
+OBJ_SERVERT := $(filter-out $(OBJ_DIR)/test_client.o $(OBJ_DIR)/server.o $(OBJ_DIR)/serverpt.o, $(OBJ)) 
+OBJ_CLIENT := $(filter-out $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/serverpt.o $(OBJ_DIR)/server.o, $(OBJ))
+OBJ_SERVER := $(filter-out $(OBJ_DIR)/servert.o $(OBJ_DIR)/serverpt.o $(OBJ_DIR)/test_client.o,  $(OBJ))
 
 
 CPPFLAGS := -Iinclude -MMD -MP
@@ -25,7 +27,7 @@ LDLIBS   := -lpthread
 
 .PHONY: all create_image_directory exe clean
 
-all: create_image_directory $(EXE_CLIENT) $(EXE_SERVER) $(EXE_SERVERT)
+all: create_image_directory $(EXE_CLIENT) $(EXE_SERVER) $(EXE_SERVERT) $(EXE_SERVERPT)
 
 
 $(EXE_CLIENT): $(OBJ_CLIENT) | $(BIN_DIR)
@@ -35,6 +37,9 @@ $(EXE_SERVER): $(OBJ_SERVER) | $(BIN_DIR)
 		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
 
 $(EXE_SERVERT): $(OBJ_SERVERT) | $(BIN_DIR)
+		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
+
+$(EXE_SERVERPT): $(OBJ_SERVERPT) | $(BIN_DIR)
 		$(CC) $(LDFLAGS) $^  -o $@ $(LDLIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
