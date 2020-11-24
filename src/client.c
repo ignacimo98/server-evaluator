@@ -23,6 +23,7 @@ void wait_server_response(int client_socket);
 void * thread_routine ();
 
 int *global_port;
+int *global_cicles;
 char *global_ip;
 char *global_image_name;
 
@@ -47,6 +48,8 @@ int main(int argc, char **argv)
     global_port = &port_number;
     //  Make image name number global
     global_image_name = argv[3];
+    //  Make cicles number global
+    global_cicles = &cicle_number;
     
     
     //  Start clock
@@ -54,28 +57,27 @@ int main(int argc, char **argv)
     double elapsed;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    //  Execute N cicles
-    pthread_t tid[thread_number];
-    for (int i = 0; i<cicle_number; ++i){
-        //  Thread creation
-        //pthread_t tid[thread_number];
-        int i = 0;
-        while(i<thread_number){
-            if (pthread_create(&tid[i], NULL, thread_routine, NULL) != 0){
-                printf("Error creating threads\n");
-            } else {
-                printf("Creado thread %d\n", i);
-            }
-            i++;
-        }
 
-        //  Thread join
-        i = 0;
-        while(i<thread_number){
-            pthread_join(tid[i++], NULL);
-            printf("Numero: %d\n",i);
+    pthread_t tid[thread_number];
+    
+    //  Thread creation
+    int i = 0;
+    while(i<thread_number){
+        if (pthread_create(&tid[i], NULL, thread_routine, NULL) != 0){
+            printf("Error creating threads\n");
+        } else {
+            printf("Creado thread %d\n", i);
         }
+        i++;
     }
+
+    //  Thread join
+    i = 0;
+    while(i<thread_number){
+        pthread_join(tid[i++], NULL);
+        printf("Numero: %d\n",i);
+    }
+
     
     //  Stop clock
     clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -108,6 +110,7 @@ int main(int argc, char **argv)
 }
 
 void * thread_routine (){
+    for (int i = 0; i< *global_cicles; ++i){
     int client_socket;
     struct sockaddr_in remote_addr;
     char filename[10];
@@ -158,6 +161,8 @@ void * thread_routine (){
     close(image_file);
     wait_server_response(client_socket);
     close(client_socket);
+    
+    }
     pthread_exit(NULL);
 }
 

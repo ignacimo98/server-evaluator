@@ -50,10 +50,14 @@ void *thread(void *vargp)
     // pthread_detach(pthread_self());
     free(vargp);
     // echo(connfd);
-    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
-    pthread_mutex_lock(&lock);
+
+    
+    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
+    // pthread_mutex_lock(&lock);
+    
     receive_save_image(connfd);
-    pthread_mutex_unlock(&lock);
+    
+    //pthread_mutex_unlock(&lock);
 
 
 //************* RESPUESTA AL CLIENTE
@@ -81,8 +85,8 @@ void *thread(void *vargp)
  */
 void receive_save_image(int connfd)
 {
-    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
-    // pthread_mutex_lock(&lock);
+    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
+    pthread_mutex_lock(&lock);
 
     size_t n;
     int total = 0;
@@ -109,7 +113,7 @@ void receive_save_image(int connfd)
         exit(EXIT_FAILURE);
     }
 
-    //pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(&lock);
 
 
     //Receive image size from client
