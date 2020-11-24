@@ -14,30 +14,41 @@
 #include <time.h>
 #include "../include/nethelp.h"
 
-
-#define PORT_NUMBER 5000
-#define SERVER_ADDRESS "192.168.1.7"
+//#define PORT_NUMBER 5000
+//#define SERVER_ADDRESS "192.168.1.7"
 #define FILE_NAME_SIZE 256
 
 int send_file(int fp, int sockfd, int filesize);
 void wait_server_response(int client_socket);
 void * thread_routine ();
 
+int *global_port;
+char *global_ip;
+char *global_image_name;
+
 int main(int argc, char **argv)
 {   
     int thread_number, cicle_number, port_number;
     //  Arguments Check
-    if (argc != 1)
+    if (argc != 6)
     {
         fprintf(stderr, "usage: %s <ip> <port> <image> <N−threads> <N−cicles>\n", argv[0]);
         exit(0);
     }
    
     //  Thread number assignment
-    thread_number = 5;
-    cicle_number = 2;
-    port_number = 5000;
-
+    port_number = atoi(argv[2]);
+    thread_number = atoi(argv[4]);
+    cicle_number = atoi(argv[5]);
+    
+    //  Make ip number global
+    global_ip = argv[1];
+    //  Make port number global
+    global_port = &port_number;
+    //  Make image name number global
+    global_image_name = argv[3];
+    
+    
     //  Start clock
     struct timespec start, finish;
     double elapsed;
@@ -102,17 +113,18 @@ void * thread_routine (){
     char filename[10];
     int image_file;
 
-    //filename ="image.jpg"; //********** change to =argv[4]
-    strcpy(filename, "image.jpg");  
+    //  Getting global values
+    int port_number = *global_port;
+    strcpy(filename,global_image_name);  
 
     //  Zeroing remote_addr struct 
     memset(&remote_addr, 0, sizeof(remote_addr));
 
     //  Construct remote_addr struct 
     remote_addr.sin_family = AF_INET;
-    remote_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    // inet_pton(AF_INET, SERVER_ADDRESS, &(remote_addr.sin_addr));
-    remote_addr.sin_port = htons(PORT_NUMBER);
+    //remote_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    remote_addr.sin_addr.s_addr = inet_addr(global_ip);
+    remote_addr.sin_port = htons(port_number);
 
     //  Create client socket
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
