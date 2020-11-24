@@ -11,7 +11,9 @@
 #include <fcntl.h>
 #include <libgen.h>
 #include <pthread.h>
+#include <time.h>
 #include "../include/nethelp.h"
+
 
 #define PORT_NUMBER 5000
 #define SERVER_ADDRESS "192.168.1.7"
@@ -19,53 +21,121 @@
 
 int send_file(int fp, int sockfd, int filesize);
 void wait_server_response(int client_socket);
+void * thread_routine ();
 
 int main(int argc, char **argv)
-{
+{   
+    int thread_number, cicle_number, port_number;
+    //  Arguments Check
+    if (argc != 1)
+    {
+        fprintf(stderr, "usage: %s <ip> <port> <image> <N−threads> <N−cicles>\n", argv[0]);
+        exit(0);
+    }
+   
+    //  Thread number assignment
+    thread_number = 5;
+    cicle_number = 2;
+    port_number = 5000;
+
+    //  Start clock
+    struct timespec start, finish;
+    double elapsed;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    //  Execute N cicles
+    pthread_t tid[thread_number];
+    for (int i = 0; i<cicle_number; ++i){
+        //  Thread creation
+        //pthread_t tid[thread_number];
+        int i = 0;
+        while(i<thread_number){
+            if (pthread_create(&tid[i], NULL, thread_routine, NULL) != 0){
+                printf("Error creating threads\n");
+            } else {
+                printf("Creado thread %d\n", i);
+            }
+            i++;
+        }
+
+        //  Thread join
+        i = 0;
+        while(i<thread_number){
+            pthread_join(tid[i++], NULL);
+            printf("Numero: %d\n",i);
+        }
+    }
+    
+    //  Stop clock
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+    printf("Tiempo total: %f\n",elapsed);
+   
+
+    //  Create and write to bin file for report
+    char port_c[8];
+    char file_name[12];
+    sprintf(port_c, "%d", port_number);
+    strcat(file_name, port_c);
+    strcat(file_name, ".bin");
+    FILE *binfile;
+    binfile = fopen(file_name, "wb");
+        if (binfile == NULL) {
+    printf("Error creating binfile\n");
+    }
+    //  Writing Thread Number
+    fwrite(&thread_number, sizeof(thread_number), 1, binfile);
+    //  Writing Cicle Number
+    fwrite(&cicle_number, sizeof(cicle_number), 1, binfile);
+    //  Writing Elapsed Time
+    fwrite(&elapsed, sizeof(elapsed), 1, binfile);
+   
+    
+
+    return 0;
+}
+
+void * thread_routine (){
     int client_socket;
-    // ssize_t len;
     struct sockaddr_in remote_addr;
-    char filename[FILE_NAME_SIZE];
+    char filename[10];
     int image_file;
 
-    /* Zeroing remote_addr struct */
+    //filename ="image.jpg"; //********** change to =argv[4]
+    strcpy(filename, "image.jpg");  
+
+    //  Zeroing remote_addr struct 
     memset(&remote_addr, 0, sizeof(remote_addr));
 
-    /* Construct remote_addr struct */
+    //  Construct remote_addr struct 
     remote_addr.sin_family = AF_INET;
     remote_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     // inet_pton(AF_INET, SERVER_ADDRESS, &(remote_addr.sin_addr));
     remote_addr.sin_port = htons(PORT_NUMBER);
 
-    /* Create client socket */
+    //  Create client socket
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (client_socket == -1)
     {
-        fprintf(stderr, "Error creating socket --> %s\n", strerror(errno));
-
+        fprintf(stderr, "Error creating socket: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    /* Connect to the server */
+    //  Connect to the server
     if (connect(client_socket, (struct sockaddr *)&remote_addr, sizeof(struct sockaddr)) == -1)
     {
-        fprintf(stderr, "Error on connect --> %s\n", strerror(errno));
-
+        fprintf(stderr, "Error on connect: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    memset(filename, 0, FILE_NAME_SIZE);
-    printf("Escriba el nombre de la imagen a enviar: ");
-    scanf("%s", filename);
-
-
+    //  Open the image to be send
     if ((image_file = open(filename, O_RDONLY)) == -1)
     {
-        fprintf(stderr, "Error opening image file --> %s\n", strerror(errno));
+        fprintf(stderr, "Error opening image file: %s\n", strerror(errno));
         close(client_socket);
         exit(EXIT_FAILURE);
     }
-
     // Get the file size
     struct stat st;
     stat(filename, &st);
@@ -73,14 +143,14 @@ int main(int argc, char **argv)
     printf("Size of file is %d \n",filesize);
 
     send_file(image_file, client_socket, filesize);
-
     close(image_file);
-    
     wait_server_response(client_socket);
-
-
     close(client_socket);
+    pthread_exit(NULL);
 }
+
+
+
 
 //  Send the file to the server
 int send_file(int fp, int sockfd, int filesize)
@@ -127,7 +197,7 @@ void wait_server_response(int client_socket){
     strcpy(done, "done");
     while((n = recv(client_socket, buf, 5, 0)) > 0){
         if (strcmp(buf, done) == 0){
-            printf("RESPUESTA RECIBIDA\n");
+            printf("Response received, shuting down connection.\n");
             break;
         }
     }

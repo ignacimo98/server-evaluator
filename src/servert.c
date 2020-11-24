@@ -12,7 +12,7 @@
 #define FILE_NAME_SIZE 50
 #define IMAGE_FOLDER "./received_images/"
 
-static int image_count = 0;
+static int image_count = 1;
 
 void echo(int connfd);
 void receive_save_image(int connfd);
@@ -49,11 +49,13 @@ void *thread(void *vargp)
     // pthread_detach(pthread_self());
     free(vargp);
     // echo(connfd);
+    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
+    pthread_mutex_lock(&lock);
     receive_save_image(connfd);
+    pthread_mutex_unlock(&lock);
 
 
-
-//************* RESPUESTA DE PRUEBA AL CLIENTE
+//************* RESPUESTA AL CLIENTE
   
     char buf [5];
     strcpy(buf, "done");
@@ -78,6 +80,9 @@ void *thread(void *vargp)
  */
 void receive_save_image(int connfd)
 {
+    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
+    // pthread_mutex_lock(&lock);
+
     size_t n;
     int total = 0;
     char buf[MAXLINE];
@@ -87,10 +92,14 @@ void receive_save_image(int connfd)
     memset(file_name, 0, FILE_NAME_SIZE);
     memset(count, 0, 3);
 
+    //image_count+=1;
     strcat(file_name, IMAGE_FOLDER);
     sprintf(count, "%d", image_count);
     strcat(file_name, count);
     strcat(file_name, ".png");
+
+
+    ++image_count;
 
     image = fopen(file_name, "w");
     if (image == NULL)
@@ -99,8 +108,10 @@ void receive_save_image(int connfd)
         exit(EXIT_FAILURE);
     }
 
-    ++image_count;
+    //pthread_mutex_unlock(&lock);
 
+
+    //Receive image size from client
     int value = 0;
     char* recv_buffer = (char*)&value;
     int remaining = sizeof(int);
@@ -123,6 +134,8 @@ void receive_save_image(int connfd)
     }
     printf("Image size received: %d\n", value);
 
+
+
     //Receive Image from Client 
     while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
     {   
@@ -135,8 +148,12 @@ void receive_save_image(int connfd)
         }
     }
     
+    
+
     fclose(image);
 
     apply_filter(file_name);
     printf("thread terminó de hacer filtro sobel\n");
+
+    //pthread_mutex_destroy(&lock);
 }
