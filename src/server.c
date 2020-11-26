@@ -28,7 +28,22 @@ int main(int argc, char **argv)
     while (1)
     {
         connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
-        receive_save_image(connfd);  /* Service client */
+        receive_save_image(connfd); /* Service client */
+
+        //************* RESPUESTA AL CLIENTE
+
+        char buf[5];
+        strcpy(buf, "done");
+        if (send(connfd, buf, 5, 0) == -1)
+        {
+            perror("Can't send done flag to client");
+            close(connfd);
+            exit(1);
+        }
+        printf("Response sent, socked finished\n");
+
+        //********************************************
+
         close(connfd); /* Close connection with client */
     }
 }
@@ -54,15 +69,50 @@ void receive_save_image(int connfd)
         // change it to end gracefully
         exit(EXIT_FAILURE);
     }
+    if (image_count < 100)
+        ++image_count;
 
-    ++image_count;
+    //Receive image size from client
+    int value = 0;
+    char *recv_buffer = (char *)&value;
+    int remaining = sizeof(int);
+    int received = 0;
+    int result = 0;
+    while (remaining > 0)
+    {
+        result = recv(connfd, recv_buffer + received, remaining, 0);
+        if (result > 0)
+        {
+            remaining -= result;
+            received += result;
+        }
+        else if (result == 0)
+        {
+            printf("Remote side closed his end of the connection before all data was received\n");
+            break;
+        }
+        else if (result < 0)
+        {
+            printf("Error receiving the image size\n");
+            break;
+        }
+    }
+    printf("Image size received: %d\n", value);
 
-    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
+    int total = 0;
+    //Receive Image from Client
+    while ((n = recv(connfd, buf, MAXLINE, 0)) > 0)
     // while ((n = readline(connfd, buf, MAXLINE)) != 0)
     {
+        total += n;
         printf("server received %ld bytes\n", n);
         // fwrite(image,n,)
         fwrite(buf, 1, n, image);
+        if (total >= value)
+        {
+            printf("Image is here\n");
+            break;
+        }
         // write(image, buf, n);
     }
 

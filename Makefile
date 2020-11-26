@@ -5,17 +5,17 @@ BIN_DIR := bin
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-EXE_SERVER := $(BIN_DIR)/echoserver
+EXE_SERVER := $(BIN_DIR)/server
 EXE_SERVERT := $(BIN_DIR)/servert
-EXE_CLIENT := $(BIN_DIR)/echoclient
+EXE_CLIENT := $(BIN_DIR)/client
 
 # OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 # OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 # OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/test_client.o, $(OBJ))
 
-OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/client.o $(OBJ_DIR)/server.o, $(OBJ)) 
-OBJ_CLIENT := $(filter-out $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/server.o, $(OBJ))
-OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o,  $(OBJ))
+OBJ_SERVERT := $(filter-out $(OBJ_DIR)/client.o $(OBJ_DIR)/server.o, $(OBJ)) 
+OBJ_CLIENT := $(filter-out  $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/server.o, $(OBJ))
+OBJ_SERVER := $(filter-out  $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o,  $(OBJ))
 
 
 CPPFLAGS := -Iinclude -MMD -MP
@@ -48,6 +48,6 @@ create_image_directory:
 		mkdir -p received_images
 
 clean:
-		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR)
+		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images
 
 -include $(OBJ:.o=.d)
