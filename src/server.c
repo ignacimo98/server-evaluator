@@ -54,9 +54,9 @@ void receive_save_image(int connfd)
     char buf[MAXLINE];
     FILE *image;
     char file_name[FILE_NAME_SIZE];
-    char count[3];
+    char count[4];
     memset(file_name, 0, FILE_NAME_SIZE);
-    memset(count, 0, 3);
+    memset(count, 0, 4);
 
     strcat(file_name, IMAGE_FOLDER);
     sprintf(count, "%d", image_count);

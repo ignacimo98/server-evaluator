@@ -23,7 +23,7 @@ CFLAGS   := -Wall -g
 LDFLAGS  := -Llib
 LDLIBS   := -lpthread
 
-.PHONY: all create_image_directory exe clean
+.PHONY: all create_image_directory exe clean test
 
 all: create_image_directory $(EXE_CLIENT) $(EXE_SERVER) $(EXE_SERVERT)
 
@@ -45,9 +45,19 @@ $(BIN_DIR) $(OBJ_DIR):
 		mkdir -p $@
 
 create_image_directory:
-		mkdir -p received_images
+		mkdir -p received_images received_images_t received_images_t_pool 
+
+test: all
+		echo "---Running Servers---"
+		./bin/server 6785 &
+		./bin/servert 6786 &
+		# ./bin/servertpool 6787 &
+		echo "---Running Testfile---"
+		./test/test.sh
+		# echo "---Stopping Servers---"
+		# kill `jobs -p`
 
 clean:
-		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images
+		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/* received_images_t/* received_images_t_pool/*
 
 -include $(OBJ:.o=.d)
