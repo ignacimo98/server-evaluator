@@ -5,6 +5,18 @@ el cual se puede obtener corriendo:
 $ sudo apt-get update
 $ sudo apt-get install octave
 
-Luego se debe instalar el paquete image desde Octave se puede correr
+Luego se debe instalar el paquete 'image', desde Octave se puede correr
 
 $ 
+
+
+
+Para compilar el programa ente a la carpeta server-evaluator y ejecute el comando make
+
+$ cd server-evaluator
+$ make
+
+
+Para ejecutar pruebas, lo cual compila y corre los servidores en puertos distintos de la máquina local, se puede correr el comando
+
+$ make test

@@ -11,20 +11,23 @@ static int image_count = 0;
 
 // void receive_save_image(int connfd);
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   char file_name[FILE_NAME_SIZE];
   int listenfd, connfd, port;
   socklen_t clientlen = sizeof(struct sockaddr_in);
   struct sockaddr_in clientaddr;
 
-  if (argc != 2) {
+  if (argc != 2)
+  {
     fprintf(stderr, "usage: %s <port>\n", argv[0]);
     exit(0);
   }
   port = atoi(argv[1]);
 
   listenfd = open_listenfd(port);
-  while (1) {
+  while (1)
+  {
     int current_image_count;
 
     connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
@@ -41,7 +44,8 @@ int main(int argc, char **argv) {
 
     char buf[5];
     strcpy(buf, "done");
-    if (send(connfd, buf, 5, 0) == -1) {
+    if (send(connfd, buf, 5, 0) == -1)
+    {
       perror("Can't send done flag to client");
       close(connfd);
       exit(1);
@@ -53,7 +57,8 @@ int main(int argc, char **argv) {
   }
 }
 
-void receive_save_image_(int connfd) {
+void receive_save_image_(int connfd)
+{
   size_t n;
   char buf[MAXLINE];
   FILE *image;
@@ -68,7 +73,8 @@ void receive_save_image_(int connfd) {
   strcat(file_name, ".png");
 
   image = fopen(file_name, "w");
-  if (image == NULL) {
+  if (image == NULL)
+  {
     // change it to end gracefully
     exit(EXIT_FAILURE);
   }
