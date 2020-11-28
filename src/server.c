@@ -6,8 +6,9 @@
 #include "sobel.h"
 #define FILE_NAME_SIZE 50
 #define IMAGE_FOLDER "./received_images/"
+#define MAX_IMAGES 100
 
-static int image_count = 0;
+static int image_count = 1;
 
 // void receive_save_image(int connfd);
 
@@ -32,13 +33,14 @@ int main(int argc, char **argv)
 
     connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
     current_image_count = image_count;
-    ++image_count;
+    if (image_count < MAX_IMAGES)
+      ++image_count;
     sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
 
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel\n");
+    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -50,48 +52,9 @@ int main(int argc, char **argv)
       close(connfd);
       exit(1);
     }
-    printf("Response sent, socked finished\n");
+    // printf("Response sent, socked finished\n");
 
     //********************************************
     close(connfd); /* Close connection with client */
   }
-}
-
-void receive_save_image_(int connfd)
-{
-  size_t n;
-  char buf[MAXLINE];
-  FILE *image;
-  char file_name[FILE_NAME_SIZE];
-  char count[3];
-  memset(file_name, 0, FILE_NAME_SIZE);
-  memset(count, 0, 3);
-
-  strcat(file_name, IMAGE_FOLDER);
-  sprintf(count, "%d", image_count);
-  strcat(file_name, count);
-  strcat(file_name, ".png");
-
-  image = fopen(file_name, "w");
-  if (image == NULL)
-  {
-    // change it to end gracefully
-    exit(EXIT_FAILURE);
-  }
-
-  ++image_count;
-
-  while ((n = recv(connfd, buf, MAXLINE, 0)) > 0)
-  // while ((n = readline(connfd, buf, MAXLINE)) != 0)
-  {
-    printf("server received %ld bytes\n", n);
-    // fwrite(image,n,)
-    fwrite(buf, 1, n, image);
-    // write(image, buf, n);
-  }
-
-  fclose(image);
-
-  apply_filter(file_name);
-  printf("thread terminó de hacer filtro sobel\n");
 }

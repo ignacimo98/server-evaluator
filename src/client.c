@@ -69,9 +69,9 @@ int main(int argc, char **argv)
         }
         else
         {
-            printf("Creado thread %d\n", i);
+            // printf("Creado thread %d\n", i);
+            i++;
         }
-        i++;
     }
 
     //  Thread join
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     while (i < thread_number)
     {
         pthread_join(tid[i++], NULL);
-        printf("Numero: %d\n", i);
+        // printf("Numero: %d\n", i);
     }
 
     //  Stop clock
@@ -158,7 +158,7 @@ void *thread_routine()
         struct stat st;
         stat(filename, &st);
         int filesize = st.st_size;
-        printf("Size of file is %d \n", filesize);
+        // printf("Size of file is %d \n", filesize);
 
         send_file(image_file, client_socket, filesize);
         close(image_file);
@@ -219,7 +219,7 @@ void wait_server_response(int client_socket)
     {
         if (strcmp(buf, done) == 0)
         {
-            printf("Response received, shuting down connection.\n");
+            // printf("Response received, shuting down connection.\n");
             break;
         }
     }

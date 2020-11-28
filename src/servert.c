@@ -10,7 +10,8 @@
 #include <pthread.h>
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images_t"
+#define IMAGE_FOLDER "./received_images_t/"
+#define MAX_IMAGES 100
 
 static int image_count = 1;
 
@@ -65,7 +66,8 @@ void *thread(void *vargp)
 
     pthread_mutex_lock(&lock);
     current_image_count = image_count;
-    ++image_count;
+    if (image_count < MAX_IMAGES)
+        ++image_count;
     pthread_mutex_unlock(&lock);
 
     sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
@@ -73,7 +75,7 @@ void *thread(void *vargp)
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel\n");
+    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -85,93 +87,10 @@ void *thread(void *vargp)
         close(connfd);
         exit(1);
     }
-    printf("Response sent, socked finished\n");
+    // printf("Response sent, socked finished\n");
 
     //********************************************
 
     close(connfd);
     return NULL;
-}
-
-/*
- * echo - read and echo text lines until client closes connection
- */
-void receive_save_image_(int connfd)
-{
-    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-
-    size_t n;
-    int total = 0;
-    char buf[MAXLINE];
-    FILE *image;
-    char file_name[FILE_NAME_SIZE];
-    char count[4];
-    memset(file_name, 0, FILE_NAME_SIZE);
-    memset(count, 0, 4);
-
-    //image_count+=1;
-    strcat(file_name, IMAGE_FOLDER);
-
-    pthread_mutex_lock(&lock);
-    sprintf(count, "%d", image_count);
-    if (image_count < 100)
-        ++image_count;
-    pthread_mutex_unlock(&lock);
-
-    strcat(file_name, count);
-    strcat(file_name, ".png");
-
-    image = fopen(file_name, "w");
-    if (image == NULL)
-    {
-        // change it to end gracefully
-        exit(EXIT_FAILURE);
-    }
-
-    //Receive image size from client
-    int value = 0;
-    char *recv_buffer = (char *)&value;
-    int remaining = sizeof(int);
-    int received = 0;
-    int result = 0;
-    while (remaining > 0)
-    {
-        result = recv(connfd, recv_buffer + received, remaining, 0);
-        if (result > 0)
-        {
-            remaining -= result;
-            received += result;
-        }
-        else if (result == 0)
-        {
-            printf("Remote side closed his end of the connection before all data was received\n");
-            break;
-        }
-        else if (result < 0)
-        {
-            printf("Error receiving the image size\n");
-            break;
-        }
-    }
-    printf("Image size received: %d\n", value);
-
-    //Receive Image from Client
-    while ((n = recv(connfd, buf, MAXLINE, 0)) > 0)
-    {
-        total += n;
-        printf("Server received %ld bytes, total is %d\n", n, total);
-        fwrite(buf, 1, n, image);
-        if (total >= value)
-        {
-            printf("Image is here\n");
-            break;
-        }
-    }
-
-    fclose(image);
-
-    apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel\n");
-
-    //pthread_mutex_destroy(&lock);
 }

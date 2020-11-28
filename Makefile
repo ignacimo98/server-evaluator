@@ -16,9 +16,10 @@ EXE_CLIENT := $(BIN_DIR)/client
 
 
 OBJ_SERVERPT := $(filter-out  $(OBJ_DIR)/client.o $(OBJ_DIR)/server.o $(OBJ_DIR)/servert.o, $(OBJ)) 
-OBJ_SERVERT := $(filter-out $(OBJ_DIR)/client.o $(OBJ_DIR)/server.o, $(OBJ)) 
-OBJ_CLIENT := $(filter-out  $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/server.o, $(OBJ))
-OBJ_SERVER := $(filter-out  $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o,  $(OBJ))
+OBJ_SERVERT := $(filter-out $(OBJ_DIR)/client.o $(OBJ_DIR)/server.o $(OBJ_DIR)/serverpt.o, $(OBJ)) 
+OBJ_SERVER := $(filter-out  $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o $(OBJ_DIR)/serverpt.o,  $(OBJ))
+
+OBJ_CLIENT := $(filter-out  $(OBJ_DIR)/sobel.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/server.o $(OBJ_DIR)/serverpt.o, $(OBJ))
 
 
 CPPFLAGS := -Iinclude -MMD -MP
@@ -61,6 +62,6 @@ test: all
 		
 
 clean:
-		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/* received_images_t/* received_images_t_pool/*
+		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/* received_images_t/* received_images_t_pool/* ./*.bin
 
 -include $(OBJ:.o=.d)
