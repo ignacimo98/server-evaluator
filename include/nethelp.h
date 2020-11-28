@@ -35,4 +35,6 @@ int open_clientfd(char *hostname, int port);
  */
 int readline(int fd, char *buf, int maxlen);
 
+void receive_save_image(int connfd, char* file_name );
+
 #endif

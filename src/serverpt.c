@@ -10,11 +10,14 @@
 #define IMAGE_FOLDER "./received_images/"
 #define QUEUE_CAPACITY 256
 
-void receive_save_image(int connfd);
+static int image_count = 1;
+
+
 // void *thread(void *vargp);
 void *thread(void* arg);
 
 sem_t *semaphore;
+pthread_mutex_t lock; 
 
 int main(int argc, char **argv) {
   semaphore = sem_open("/serverpt_sem", O_CREAT, S_IRWXU | S_IRWXG, 0);
@@ -32,6 +35,11 @@ int main(int argc, char **argv) {
   }
   port = atoi(argv[1]);
   int thread_amount = atoi(argv[2]);
+
+  if (pthread_mutex_init(&lock, NULL) != 0) { 
+        printf("\n mutex init has failed\n"); 
+        return 1; 
+    }
 
   pthread_t tids[thread_amount];
 
@@ -51,14 +59,51 @@ int main(int argc, char **argv) {
 void *thread(void* arg) {
   struct Queue *queue = (struct Queue*) arg;
   while (1) {
+     
     sem_wait(semaphore);
     int connfd = dequeue(queue);
-    receive_save_image(connfd);
+    int current_image_count;
+    char file_name[FILE_NAME_SIZE];
+
+
+    pthread_mutex_lock(&lock);
+    current_image_count = image_count;
+    ++image_count;
+    pthread_mutex_unlock(&lock);
+
+    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
+
+    receive_save_image(connfd, file_name);
+
+    apply_filter(file_name);
+    printf("thread terminó de hacer filtro sobel\n");
+    
+
+
+
+//************* RESPUESTA AL CLIENTE
+  
+    char buf [5];
+    strcpy(buf, "done");
+    if (send(connfd,buf,5,0) == -1)
+        {
+            perror("Can't send done flag to client");
+            close(connfd);
+            exit(1);
+        }
+    printf("Response sent, socked finished\n");
+
+   
+//********************************************
+
+
     close(connfd);
+
+
   }
 }
 
-void receive_save_image(int connfd) { sleep(1); }
+
 
 // /* thread routine */
 // void *thread(void *vargp) {

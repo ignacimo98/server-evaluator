@@ -81,3 +81,65 @@ int readline(int fd, char * buf, int maxlen)
   return n+1;
 }
 
+void receive_save_image(int connfd, char* file_name )
+{
+    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
+    // pthread_mutex_lock(&lock);
+
+    size_t n;
+    int total = 0;
+    char buf[MAXLINE];
+    FILE *image;
+
+    image = fopen(file_name, "w");
+    if (image == NULL)
+    {
+        // change it to end gracefully
+        exit(EXIT_FAILURE);
+    }
+
+    //Receive image size from client
+    int value = 0;
+    char* recv_buffer = (char*)&value;
+    int remaining = sizeof(int);
+    int received = 0;
+    int result = 0;
+    while (remaining > 0) {
+        result = recv(connfd, recv_buffer+received, remaining, 0);
+        if (result > 0) {
+            remaining -= result;
+            received += result;
+        }
+        else if (result == 0) {
+            printf("Remote side closed his end of the connection before all data was received\n");
+            break;
+        }
+        else if (result < 0) {
+            printf("Error receiving the image size\n");
+            break;
+        }
+    }
+    printf("Image size received: %d\n", value);
+
+
+
+    //Receive Image from Client 
+    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
+    {   
+        total+=n;
+        printf("Server received %ld bytes, total is %d\n", n,total);
+        fwrite(buf, 1, n, image);
+        if (total >= value){
+            printf("Image is here\n");
+            break;
+        }
+    }
+    
+    
+
+    fclose(image);
+
+    
+
+
+}

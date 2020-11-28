@@ -5,10 +5,10 @@ BIN_DIR := bin
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-EXE_SERVER := $(BIN_DIR)/echoserver
+EXE_SERVER := $(BIN_DIR)/server
 EXE_SERVERT := $(BIN_DIR)/servert
 EXE_SERVERPT := $(BIN_DIR)/serverpt
-EXE_CLIENT := $(BIN_DIR)/echoclient
+EXE_CLIENT := $(BIN_DIR)/client
 
 # OBJ_SERVERT := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoserver.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o, $(OBJ))
 # OBJ_SERVER := $(filter-out $(OBJ_DIR)/echoclient.o $(OBJ_DIR)/echoservert.o $(OBJ_DIR)/servert.o $(OBJ_DIR)/client.o, $(OBJ))

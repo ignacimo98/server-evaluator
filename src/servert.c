@@ -10,16 +10,20 @@
 #include <pthread.h>
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images/"
+#define IMAGE_FOLDER "./received_images"
 
 static int image_count = 1;
 
 void echo(int connfd);
-void receive_save_image(int connfd);
 void *thread(void *vargp);
+
+
+pthread_mutex_t lock; 
 
 int main(int argc, char **argv)
 {
+    
+
     int listenfd, port;
     int *connfdp;
     socklen_t clientlen = sizeof(struct sockaddr_in);
@@ -31,7 +35,13 @@ int main(int argc, char **argv)
         fprintf(stderr, "usage: %s <port>\n", argv[0]);
         exit(0);
     }
+
     port = atoi(argv[1]);
+
+    if (pthread_mutex_init(&lock, NULL) != 0) { 
+        printf("\n mutex init has failed\n"); 
+        return 1; 
+    }
 
     listenfd = open_listenfd(port);
     while (1)
@@ -41,23 +51,34 @@ int main(int argc, char **argv)
         pthread_create(&tid, NULL, thread, connfdp);
     }
 
+    pthread_mutex_destroy(&lock);
+    return 0;
+
 }
 
 /* thread routine */
 void *thread(void *vargp)
 {
     int connfd = *((int *)vargp);
-    // pthread_detach(pthread_self());
-    free(vargp);
-    // echo(connfd);
+    int current_image_count;
+    char file_name[FILE_NAME_SIZE];
 
+    free(vargp);
+
+
+    pthread_mutex_lock(&lock);
+    current_image_count = image_count;
+    ++image_count;
+    pthread_mutex_unlock(&lock);
+
+    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
+
+    receive_save_image(connfd, file_name);
+
+    apply_filter(file_name);
+    printf("thread terminó de hacer filtro sobel\n");
     
-    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
-    // pthread_mutex_lock(&lock);
-    
-    receive_save_image(connfd);
-    
-    //pthread_mutex_unlock(&lock);
+
 
 
 //************* RESPUESTA AL CLIENTE
@@ -83,7 +104,7 @@ void *thread(void *vargp)
 /*
  * echo - read and echo text lines until client closes connection
  */
-void receive_save_image(int connfd)
+void receive_save_image_(int connfd)
 {
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; 
     pthread_mutex_lock(&lock);
