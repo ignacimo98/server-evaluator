@@ -8,6 +8,8 @@ srvt=$!
 ./bin/serverpt 6787 10 &
 srvtp=$!
 
+sleep 1
+
 echo "Pruebas secuenciales Threads: 1  Ciclos: 8"
 ./bin/client localhost 6785 img1.png 1 8 &
 client1=$!

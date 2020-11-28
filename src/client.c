@@ -89,13 +89,16 @@ int main(int argc, char **argv)
     printf("Tiempo total: %f\n", elapsed);
 
     //  Create and write to bin file for report
-    char port_c[8];
+    // char port_c[8];
     char file_name[12];
-    sprintf(port_c, "%d", port_number);
-    strcat(file_name, port_c);
-    strcat(file_name, ".bin");
+    // sprintf(port_c, "%d", port_number);
+    // strcat(file_name, port_c);
+    // strcat(file_name, ".bin");
+
+    sprintf(file_name, "%d.bin", port_number);
+
     FILE *binfile;
-    binfile = fopen(file_name, "wb");
+    binfile = fopen(file_name, "ab");
     if (binfile == NULL)
     {
         printf("Error creating binfile\n");
