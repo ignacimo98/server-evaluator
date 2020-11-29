@@ -10,16 +10,19 @@
 #include <pthread.h>
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images/"
+#define IMAGE_FOLDER "./received_images_t/"
+#define MAX_IMAGES 100
 
-static int image_count = 0;
+static int image_count = 1;
 
 void echo(int connfd);
-void receive_save_image(int connfd);
 void *thread(void *vargp);
+
+pthread_mutex_t lock;
 
 int main(int argc, char **argv)
 {
+
     int listenfd, port;
     int *connfdp;
     socklen_t clientlen = sizeof(struct sockaddr_in);
@@ -31,7 +34,14 @@ int main(int argc, char **argv)
         fprintf(stderr, "usage: %s <port>\n", argv[0]);
         exit(0);
     }
+
     port = atoi(argv[1]);
+
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n mutex init has failed\n");
+        return 1;
+    }
 
     listenfd = open_listenfd(port);
     while (1)
@@ -40,58 +50,47 @@ int main(int argc, char **argv)
         *connfdp = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
         pthread_create(&tid, NULL, thread, connfdp);
     }
+
+    pthread_mutex_destroy(&lock);
+    return 0;
 }
 
 /* thread routine */
 void *thread(void *vargp)
 {
     int connfd = *((int *)vargp);
-    // pthread_detach(pthread_self());
-    free(vargp);
-    // echo(connfd);
-    receive_save_image(connfd);
-    close(connfd);
-    return NULL;
-}
-
-/*
- * echo - read and echo text lines until client closes connection
- */
-void receive_save_image(int connfd)
-{
-    size_t n;
-    char buf[MAXLINE];
-    FILE *image;
+    int current_image_count;
     char file_name[FILE_NAME_SIZE];
-    char count[3];
-    memset(file_name, 0, FILE_NAME_SIZE);
-    memset(count, 0, 3);
 
-    strcat(file_name, IMAGE_FOLDER);
-    sprintf(count, "%d", image_count);
-    strcat(file_name, count);
-    strcat(file_name, ".png");
+    free(vargp);
 
-    image = fopen(file_name, "w");
-    if (image == NULL)
-    {
-        // change it to end gracefully
-        exit(EXIT_FAILURE);
-    }
+    pthread_mutex_lock(&lock);
+    current_image_count = image_count;
+    if (image_count < MAX_IMAGES)
+        ++image_count;
+    pthread_mutex_unlock(&lock);
 
-    ++image_count;
+    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
 
-    while((n = recv(connfd, buf, MAXLINE, 0)) > 0)
-    // while ((n = readline(connfd, buf, MAXLINE)) != 0)
-    {
-        printf("server received %ld bytes\n", n);
-        // fwrite(image,n,)
-        fwrite(buf, 1, n, image);
-        // write(image, buf, n);
-    }
-
-    fclose(image);
+    receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel\n");
+    // printf("thread terminó de hacer filtro sobel\n");
+
+    //************* RESPUESTA AL CLIENTE
+
+    char buf[5];
+    strcpy(buf, "done");
+    if (send(connfd, buf, 5, 0) == -1)
+    {
+        perror("Can't send done flag to client");
+        close(connfd);
+        exit(1);
+    }
+    // printf("Response sent, socked finished\n");
+
+    //********************************************
+
+    close(connfd);
+    return NULL;
 }

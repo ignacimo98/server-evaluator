@@ -9,4 +9,6 @@ BORRAR.c
 .vscode
 RI
 received_images/*
+received_images_t/*
+received_images_t_pool/*
 
