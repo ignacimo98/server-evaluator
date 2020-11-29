@@ -48,6 +48,27 @@ def graph_data():
         plt.ylabel("Average Time")
         cont += 1
 
+    #THROUGHPUT
+    tput_x_avg_time = plt.figure(figsize=(16,16))
+    tput_x_avg_time.suptitle("Throughput vs Number of Images")
+
+    cont = 1
+    for i in datman.M_Thread_Array:
+        tput_x_avg_time.add_subplot(graph_rows,2, cont).title.set_text("Threads: " + str(i.id))
+        num_images = [cycle * int(i.id) for cycle in i.measurements[0].cycle]
+
+        for m in i.measurements:
+            avg_time = []
+            for x,times in enumerate(m.time):
+                avg_time.append(1/(times/num_images[x]))
+            
+            plt.plot(num_images, avg_time, label = name_changer(m.file_name),marker="o")
+
+        plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
+        plt.xlabel("Number of Images")
+        plt.ylabel("Throughput")
+        cont += 1
+
     plt.show()
 
 
