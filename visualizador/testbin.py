@@ -5,7 +5,7 @@ def openfile(path,cicles):
     binFile = open(path, "wb")
     
     for i in range(cicles):
-        binFile.write(bin(1))
+        binFile.write(bin(100))
 
 def generateCicle():
         cicle = int_to_bin(random.randint(1,100))

@@ -1,7 +1,7 @@
 import struct
 
 def get_data(path):
-    file = open(path,"r")
+    file = open(path,"rb")
     data = file.readline()
 
     for i in range (len(data)//chunk_size):

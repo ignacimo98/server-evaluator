@@ -2,7 +2,7 @@ import random
 import struct
 
 def openfile(path,cicles):
-    binFile = open(path, "wb")
+    binFile = open(path, "w")
     
     for i in range(cicles):
         binFile.write(generateCicle())
@@ -13,7 +13,7 @@ def generateCicle():
         cicle += float_to_bin(random.random())
         cicle += float_to_bin(random.random())
 
-        return bin(cicle)
+        return cicle
 
 # Funciones Auxiliares de Flaot y Binario
 # Los numeros binarios se representan en el formato IEEE-754
