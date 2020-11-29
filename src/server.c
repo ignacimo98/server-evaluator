@@ -6,13 +6,15 @@
 #include "sobel.h"
 #define FILE_NAME_SIZE 50
 #define IMAGE_FOLDER "./received_images/"
+#define MAX_IMAGES 100
 
-static int image_count = 0;
+static int image_count = 1;
 
-void receive_save_image(int connfd);
+// void receive_save_image(int connfd);
 
 int main(int argc, char **argv)
 {
+    char file_name[FILE_NAME_SIZE];
     int listenfd, connfd, port;
     socklen_t clientlen = sizeof(struct sockaddr_in);
     struct sockaddr_in clientaddr;
@@ -27,8 +29,18 @@ int main(int argc, char **argv)
     listenfd = open_listenfd(port);
     while (1)
     {
+        int current_image_count;
+
         connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
-        receive_save_image(connfd); /* Service client */
+        current_image_count = image_count;
+        if (image_count < MAX_IMAGES)
+            ++image_count;
+        sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
+
+        receive_save_image(connfd, file_name);
+
+        apply_filter(file_name);
+        // printf("thread terminó de hacer filtro sobel\n");
 
         //************* RESPUESTA AL CLIENTE
 
@@ -40,84 +52,9 @@ int main(int argc, char **argv)
             close(connfd);
             exit(1);
         }
-        printf("Response sent, socked finished\n");
+        // printf("Response sent, socked finished\n");
 
         //********************************************
-
         close(connfd); /* Close connection with client */
     }
-}
-
-void receive_save_image(int connfd)
-{
-    size_t n;
-    char buf[MAXLINE];
-    FILE *image;
-    char file_name[FILE_NAME_SIZE];
-    char count[4];
-    memset(file_name, 0, FILE_NAME_SIZE);
-    memset(count, 0, 4);
-
-    strcat(file_name, IMAGE_FOLDER);
-    sprintf(count, "%d", image_count);
-    strcat(file_name, count);
-    strcat(file_name, ".png");
-
-    image = fopen(file_name, "w");
-    if (image == NULL)
-    {
-        // change it to end gracefully
-        exit(EXIT_FAILURE);
-    }
-    if (image_count < 100)
-        ++image_count;
-
-    //Receive image size from client
-    int value = 0;
-    char *recv_buffer = (char *)&value;
-    int remaining = sizeof(int);
-    int received = 0;
-    int result = 0;
-    while (remaining > 0)
-    {
-        result = recv(connfd, recv_buffer + received, remaining, 0);
-        if (result > 0)
-        {
-            remaining -= result;
-            received += result;
-        }
-        else if (result == 0)
-        {
-            printf("Remote side closed his end of the connection before all data was received\n");
-            break;
-        }
-        else if (result < 0)
-        {
-            printf("Error receiving the image size\n");
-            break;
-        }
-    }
-    printf("Image size received: %d\n", value);
-
-    int total = 0;
-    //Receive Image from Client
-    while ((n = recv(connfd, buf, MAXLINE, 0)) > 0)
-    // while ((n = readline(connfd, buf, MAXLINE)) != 0)
-    {
-        total += n;
-        printf("server received %ld bytes\n", n);
-        // fwrite(image,n,)
-        fwrite(buf, 1, n, image);
-        if (total >= value)
-        {
-            printf("Image is here\n");
-            break;
-        }
-        // write(image, buf, n);
-    }
-
-    fclose(image);
-
-    apply_filter(file_name);
-    printf("thread terminó de hacer filtro sobel\n");
 }

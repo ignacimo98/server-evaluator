@@ -12,7 +12,8 @@
 #include <libgen.h>
 #include <pthread.h>
 #include <time.h>
-#include "../include/nethelp.h"
+
+#include "nethelp.h"
 
 //#define PORT_NUMBER 5000
 //#define SERVER_ADDRESS "192.168.1.7"
@@ -68,9 +69,9 @@ int main(int argc, char **argv)
         }
         else
         {
-            printf("Creado thread %d\n", i);
+            // printf("Creado thread %d\n", i);
+            i++;
         }
-        i++;
     }
 
     //  Thread join
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
     while (i < thread_number)
     {
         pthread_join(tid[i++], NULL);
-        printf("Numero: %d\n", i);
+        // printf("Numero: %d\n", i);
     }
 
     //  Stop clock
@@ -88,13 +89,16 @@ int main(int argc, char **argv)
     printf("Tiempo total: %f\n", elapsed);
 
     //  Create and write to bin file for report
-    char port_c[8];
+    // char port_c[8];
     char file_name[12];
-    sprintf(port_c, "%d", port_number);
-    strcat(file_name, port_c);
-    strcat(file_name, ".bin");
+    // sprintf(port_c, "%d", port_number);
+    // strcat(file_name, port_c);
+    // strcat(file_name, ".bin");
+
+    sprintf(file_name, "%d.bin", port_number);
+
     FILE *binfile;
-    binfile = fopen(file_name, "wb");
+    binfile = fopen(file_name, "ab");
     if (binfile == NULL)
     {
         printf("Error creating binfile\n");
@@ -157,7 +161,7 @@ void *thread_routine()
         struct stat st;
         stat(filename, &st);
         int filesize = st.st_size;
-        printf("Size of file is %d \n", filesize);
+        // printf("Size of file is %d \n", filesize);
 
         send_file(image_file, client_socket, filesize);
         close(image_file);
@@ -218,7 +222,7 @@ void wait_server_response(int client_socket)
     {
         if (strcmp(buf, done) == 0)
         {
-            printf("Response received, shuting down connection.\n");
+            // printf("Response received, shuting down connection.\n");
             break;
         }
     }
