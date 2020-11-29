@@ -5,7 +5,7 @@ def openfile(path,cicles):
     binFile = open(path, "wb")
     
     for i in range(cicles):
-        binFile.write(generateCicle())
+        binFile.write(bin(1))
 
 def generateCicle():
         cicle = int_to_bin(random.randint(1,100))
@@ -13,7 +13,7 @@ def generateCicle():
         cicle += float_to_bin(random.random())
         cicle += float_to_bin(random.random())
 
-        return bin(cicle)
+        return cicle
 
 # Funciones Auxiliares de Flaot y Binario
 # Los numeros binarios se representan en el formato IEEE-754
@@ -34,4 +34,4 @@ def int_to_bin(numInt):
 
 
 if __name__ == "__main__":
-    openfile("cycles.bin",10)
+    openfile("cycles_test.bin",10)

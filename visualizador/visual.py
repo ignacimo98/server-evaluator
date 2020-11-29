@@ -1,6 +1,6 @@
 import struct
 
-def getData(path):
+def get_data(path):
     file = open(path,"r")
     data = file.readline()
 
@@ -27,8 +27,18 @@ def getData(path):
 
         cycles[i] = subcycle
 
-        print(cycles[i])
+        # print(cycles[i])
 
+def extract_data(array,index):
+    output = []
+    for i in range(len(cycles)):
+        output.append(cycles[i][index])
+    return output
+
+def concat_time(array):
+    for i in range(len(array)-1):
+        array[i+1] = array[i+1] + array[i]
+    return array
 
 def bin_to_float(numBin):
     numBin = int(numBin,2)
@@ -37,4 +47,8 @@ def bin_to_float(numBin):
 if __name__ == "__main__":
     chunk_size = 128
     cycles = []
-    getData("cycles.bin")
+    get_data("cycles.bin")
+
+    timeArray = concat_time(extract_data(cycles,2))
+    print(timeArray)
+    
