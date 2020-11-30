@@ -132,7 +132,7 @@ Project Link: [https://github.com/ignacimo98/server-evaluator](https://github.co
 [issues-shield]: https://img.shields.io/github/issues/ignacimo98/server-evaluator.svg?style=flat-square
 [issues-url]: https://github.com/ignacimo98/server-evaluator/issues
 [license-shield]: https://img.shields.io/github/license/ignacimo98/server-evaluator.svg?style=flat-square
-[license-url]: https://github.com/ignacimo98/server-evaluator/blob/master/LICENSE.txt
+[license-url]: https://github.com/ignacimo98/server-evaluator/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/github_username
 [product-screenshot]: images/screenshot.png
