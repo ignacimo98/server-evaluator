@@ -91,8 +91,16 @@ void receive_save_image(int connfd, char *file_name)
     int total = 0;
     char buf[MAXLINE];
     FILE *image;
+    // if (strcasecmp(file_name, "100.png") == 0)
+    // {
+    //     image = tmpfile();
+    // }
 
+    // else
+    // {
     image = fopen(file_name, "w");
+    // }
+
     if (image == NULL)
     {
         // change it to end gracefully

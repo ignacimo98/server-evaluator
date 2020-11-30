@@ -5,7 +5,7 @@
 #include "nethelp.h"
 #include "sobel.h"
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images/"
+#define IMAGE_FOLDER "./received_images/received_images_s"
 #define MAX_IMAGES 100
 
 static int image_count = 1;

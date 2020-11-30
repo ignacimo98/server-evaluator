@@ -18,6 +18,7 @@
 //#define PORT_NUMBER 5000
 //#define SERVER_ADDRESS "192.168.1.7"
 #define FILE_NAME_SIZE 256
+#define MEASUREMENT_FOLDER "./test/measurements"
 
 int send_file(int fp, int sockfd, int filesize);
 void wait_server_response(int client_socket);
@@ -90,12 +91,12 @@ int main(int argc, char **argv)
 
     //  Create and write to bin file for report
     // char port_c[8];
-    char file_name[12];
+    char file_name[256];
     // sprintf(port_c, "%d", port_number);
     // strcat(file_name, port_c);
     // strcat(file_name, ".bin");
 
-    sprintf(file_name, "%d.bin", port_number);
+    sprintf(file_name, "%s/%d.bin", MEASUREMENT_FOLDER, port_number);
 
     FILE *binfile;
     binfile = fopen(file_name, "ab");

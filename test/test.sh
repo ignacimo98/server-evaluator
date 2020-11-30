@@ -5,7 +5,7 @@ echo "---Running Servers---"
 srv=$!
 ./bin/servert 6786 &
 srvt=$!
-./bin/serverpt 6787 10 &
+./bin/serverpt 6787 4 &
 srvtp=$!
 
 sleep 1
@@ -30,15 +30,15 @@ client3=$!
 
 wait $client1 $client2 $client3
 
-# echo "Pruebas secuenciales Threads: 1  Ciclos: 32"
-# ./bin/client localhost 6785 img1.png 1 32 &
-# client1=$!
-# ./bin/client localhost 6786 img1.png 1 32 &
-# client2=$!
-# ./bin/client localhost 6787 img1.png 1 32 &
-# client3=$!
+echo "Pruebas secuenciales Threads: 1  Ciclos: 32"
+./bin/client localhost 6785 img1.png 1 32 &
+client1=$!
+./bin/client localhost 6786 img1.png 1 32 &
+client2=$!
+./bin/client localhost 6787 img1.png 1 32 &
+client3=$!
 
-# wait $client1 $client2 $client3
+wait $client1 $client2 $client3
 
 # echo "Pruebas secuenciales Threads: 1  Ciclos: 64"
 # ./bin/client localhost 6785 img1.png 1 64 &

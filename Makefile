@@ -52,7 +52,7 @@ $(BIN_DIR) $(OBJ_DIR):
 		mkdir -p $@
 
 create_image_directory:
-		mkdir -p received_images received_images_t received_images_t_pool 
+		mkdir -p received_images received_images/received_images_s received_images/received_images_t received_images/received_images_t_pool test/measurements
 
 test: all
 		
@@ -62,6 +62,6 @@ test: all
 		
 
 clean:
-		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/* received_images_t/* received_images_t_pool/* ./*.bin
+		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/received_images_s/* received_images/received_images_t/* received_images/received_images_t_pool/* ./*.bin
 
 -include $(OBJ:.o=.d)
