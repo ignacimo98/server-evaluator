@@ -56,6 +56,7 @@ This is an experiment to evaluate the performance of different server models for
 * C: Standard _gnu17_
 * Python: Version >3.5
 * matplotlib
+* octave
 
 
 
@@ -70,7 +71,8 @@ To get a local copy up and running follow these simple steps.
 In order to compile and run the project, the following dependencies are needed.
 * gcc
 * make
-* python and matplotlib
+* python and _matplotlib_
+* octave and the _image_ package
 
 ### Compilation
 
