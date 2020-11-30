@@ -8,11 +8,11 @@
 #include "sobel.h"
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images_t_pool/"
+#define IMAGE_FOLDER "./received_images/received_images_t_pool"
 #define QUEUE_CAPACITY 256
 #define MAX_IMAGES 100
 
-static int image_count = 1;
+static int image_count = 0;
 
 // void *thread(void *vargp);
 void *thread(void *arg);
@@ -75,16 +75,15 @@ void *thread(void *arg)
 
     pthread_mutex_lock(&lock);
     current_image_count = image_count;
-    if (image_count < MAX_IMAGES)
-      ++image_count;
+
+    ++image_count;
     pthread_mutex_unlock(&lock);
 
-    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
+    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count % MAX_IMAGES);
 
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -96,23 +95,9 @@ void *thread(void *arg)
       close(connfd);
       exit(1);
     }
-    // printf("Response sent, socked finished\n");
 
     //********************************************
 
     close(connfd);
   }
 }
-
-// /* thread routine */
-// void *thread(void *vargp) {
-//   while (1) {
-//     int connfd = *((int *)vargp);
-//     // pthread_detach(pthread_self());
-//     free(vargp);
-//     // echo(connfd);
-//     receive_save_image(connfd);
-//     close(connfd);
-//   }
-//   return NULL;
-// }

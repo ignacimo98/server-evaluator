@@ -10,7 +10,7 @@
 #include <pthread.h>
 
 #define FILE_NAME_SIZE 50
-#define IMAGE_FOLDER "./received_images_t/"
+#define IMAGE_FOLDER "./received_images/received_images_t/"
 #define MAX_IMAGES 100
 
 static int image_count = 1;
@@ -66,16 +66,15 @@ void *thread(void *vargp)
 
     pthread_mutex_lock(&lock);
     current_image_count = image_count;
-    if (image_count < MAX_IMAGES)
-        ++image_count;
+
+    ++image_count;
     pthread_mutex_unlock(&lock);
 
-    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count);
+    sprintf(file_name, "%s/%d.png", IMAGE_FOLDER, current_image_count % MAX_IMAGES);
 
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -87,7 +86,6 @@ void *thread(void *vargp)
         close(connfd);
         exit(1);
     }
-    // printf("Response sent, socked finished\n");
 
     //********************************************
 
