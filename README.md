@@ -14,10 +14,9 @@
 <p align="center">
 
 
-  <h3 align="center">Server </h3>
+  <h3 align="center">Server Evaluator</h3>
 
   <p align="center">
-
     <a href="https://github.com/ignacimo98/server-evaluator">View Project</a>
     ·
     <a href="https://github.com/ignacimo98/server-evaluator/issues">Report Bug</a>
@@ -49,17 +48,14 @@
 
 
 
-This is a RTOS scheduler simulation, with each periodic process modeled as an alien going through a maze. The user can choose the scheduling algorithm between RMS and EDF. The simulation can run in two modes:
-* Automatic, where the payload is introduced before the begining of the simulation.
-* Manual, where aliens can be introduced whenever the user wants.
+This is an experiment to evaluate the performance of different server models for a server-client architecture, with one server being totally sequential, another one creates a thread to process the requests, and one last one has a pre created pool of threads which get assigned a request when it arrives. 
 
 
 ### Built With
 
 * C: Standard _gnu17_
-* Allegro
 * Python: Version >3.5
-* Tkinter
+* matplotlib
 
 
 
@@ -72,10 +68,9 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 In order to compile and run the project, the following dependencies are needed.
-* Allegro: Follow the installation instructions found in their [Quickstart Page](https://github.com/liballeg/allegro_wiki/wiki/Quickstart).
 * gcc
 * make
-* python
+* python and matplotlib
 
 ### Compilation
 
@@ -99,7 +94,7 @@ make
 
 In order to run the project, make sure you're still on the project's base directory and execute it.
 ```sh
-./bin/maze
+make test
 ```
 
 
@@ -117,6 +112,8 @@ Distributed under the GNU GPLv3 License. See `LICENSE` for more information.
 
 * Ignacio Mora - [@nachomora_](https://twitter.com/nachomora_) - ignacimo98@gmail.com
 * Daniel Castro - [@danicast_c](https://twitter.com/danicast_c) - danielsony1311@gmail.com
+* Jung
+* Jorge
 
 Project Link: [https://github.com/ignacimo98/server-evaluator](https://github.com/ignacimo98/server-evaluator)
 
