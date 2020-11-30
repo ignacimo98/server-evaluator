@@ -62,6 +62,6 @@ test: all
 		
 
 clean:
-		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/received_images_s/* received_images/received_images_t/* received_images/received_images_t_pool/* ./*.bin
+		@$(RM) -rv $(BIN_DIR) $(OBJ_DIR) received_images/received_images_s/* received_images/received_images_t/* received_images/received_images_t_pool/* test/measurements/* ./*.bin
 
 -include $(OBJ:.o=.d)
