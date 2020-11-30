@@ -114,8 +114,8 @@ Distributed under the GNU GPLv3 License. See `LICENSE` for more information.
 
 * Ignacio Mora - [@nachomora_](https://twitter.com/nachomora_) - ignacimo98@gmail.com
 * Daniel Castro - [@danicast_c](https://twitter.com/danicast_c) - danielsony1311@gmail.com
-* Jung
-* Jorge
+* Jung Bak - [@_bakkim](https://twitter.com/_bakkim) - bakkim05@gmail.com
+* Jorge Agüero - georgeaz56@gmail.com
 
 Project Link: [https://github.com/ignacimo98/server-evaluator](https://github.com/ignacimo98/server-evaluator)
 
