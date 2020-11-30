@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def graph_data():
     #TOTAL TIME
-    num_threads_x_time = plt.figure(figsize=(16,16))
+    num_threads_x_time = plt.figure(figsize=(8,8))
     num_threads_x_time.suptitle("Total Time vs Number of Images")
 
     temp = len(datman.M_Thread_Array)
@@ -24,11 +24,12 @@ def graph_data():
         plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
         plt.xlabel("Number of Images")
         plt.ylabel("Total Time")
+        plt.tight_layout()
         
         cont += 1
 
     #AVERAGE TIME
-    num_threads_x_avg_time = plt.figure(figsize=(16,16))
+    num_threads_x_avg_time = plt.figure(figsize=(8,8))
     num_threads_x_avg_time.suptitle("Average Time vs Number of Images")
 
     cont = 1
@@ -46,10 +47,11 @@ def graph_data():
         plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
         plt.xlabel("Number of Images")
         plt.ylabel("Average Time")
+        plt.tight_layout()
         cont += 1
 
     #THROUGHPUT
-    tput_x_avg_time = plt.figure(figsize=(16,16))
+    tput_x_avg_time = plt.figure(figsize=(8,8))
     tput_x_avg_time.suptitle("Throughput vs Number of Images")
 
     cont = 1
@@ -67,6 +69,7 @@ def graph_data():
         plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
         plt.xlabel("Number of Images")
         plt.ylabel("Throughput")
+        plt.tight_layout()
         cont += 1
 
     plt.show()
@@ -84,9 +87,9 @@ def name_changer(name):
 
 if __name__ == "__main__":
     datman = Data_Manager()
-    datman.get_data("6785.bin")
-    datman.get_data("6786.bin")
-    datman.get_data("6787.bin")
+    datman.get_data("test/6785.bin")
+    datman.get_data("test/6786.bin")
+    datman.get_data("test/6787.bin")
 
     graph_data()
 
