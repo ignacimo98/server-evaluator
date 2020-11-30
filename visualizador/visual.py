@@ -1,54 +1,92 @@
 import struct
+from Data_Manager import Data_Manager
 
-def get_data(path):
-    file = open(path,"rb")
-    data = file.readline()
+import numpy as np
+import math
+import matplotlib.pyplot as plt
 
-    for i in range (len(data)//chunk_size):
-        cycles.append(data[0:chunk_size])
-        data = data.replace(cycles[i],'')
+def graph_data():
+    #TOTAL TIME
+    num_threads_x_time = plt.figure(figsize=(16,16))
+    num_threads_x_time.suptitle("Total Time vs Number of Images")
 
-    for i in range (len(cycles)):
-        subcycle = []
-        temp = cycles[i]
+    temp = len(datman.M_Thread_Array)
+    graph_rows = math.ceil(temp/2)
+    cont = 1
 
-        #number of threads
-        subcycle.append(int(temp[0:32],2))
-        temp = temp.replace(temp[0:32],'')
-        #number of cycles
-        subcycle.append(int(temp[0:32],2))
-        temp = temp.replace(temp[0:32],'')
-        #total time of the cycles
-        subcycle.append(bin_to_float(temp[0:32]))
-        temp = temp.replace(temp[0:32],'')
-        #average time of the cycles
-        subcycle.append(bin_to_float(temp[0:32]))
-        temp = temp.replace(temp[0:32],'')
+    for i in datman.M_Thread_Array:
+        num_threads_x_time.add_subplot(graph_rows,2, cont).title.set_text("Threads: " + str(i.id))
+        num_images = [cycle * int(i.id) for cycle in i.measurements[0].cycle]
 
-        cycles[i] = subcycle
+        for m in i.measurements:
+            plt.plot(num_images, m.time, label = name_changer(m.file_name),marker = "o")
 
-        # print(cycles[i])
+        plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
+        plt.xlabel("Number of Images")
+        plt.ylabel("Total Time")
+        
+        cont += 1
 
-def extract_data(array,index):
-    output = []
-    for i in range(len(cycles)):
-        output.append(cycles[i][index])
-    return output
+    #AVERAGE TIME
+    num_threads_x_avg_time = plt.figure(figsize=(16,16))
+    num_threads_x_avg_time.suptitle("Average Time vs Number of Images")
 
-def concat_time(array):
-    for i in range(len(array)-1):
-        array[i+1] = array[i+1] + array[i]
-    return array
+    cont = 1
+    for i in datman.M_Thread_Array:
+        num_threads_x_avg_time.add_subplot(graph_rows,2, cont).title.set_text("Threads: " + str(i.id))
+        num_images = [cycle * int(i.id) for cycle in i.measurements[0].cycle]
 
-def bin_to_float(numBin):
-    numBin = int(numBin,2)
-    return struct.unpack('f', struct.pack('I', numBin))[0]
+        for m in i.measurements:
+            avg_time = []
+            for x,times in enumerate(m.time):
+                avg_time.append(times/num_images[x])
+            
+            plt.plot(num_images, avg_time, label = name_changer(m.file_name),marker="o")
+
+        plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
+        plt.xlabel("Number of Images")
+        plt.ylabel("Average Time")
+        cont += 1
+
+    #THROUGHPUT
+    tput_x_avg_time = plt.figure(figsize=(16,16))
+    tput_x_avg_time.suptitle("Throughput vs Number of Images")
+
+    cont = 1
+    for i in datman.M_Thread_Array:
+        tput_x_avg_time.add_subplot(graph_rows,2, cont).title.set_text("Threads: " + str(i.id))
+        num_images = [cycle * int(i.id) for cycle in i.measurements[0].cycle]
+
+        for m in i.measurements:
+            avg_time = []
+            for x,times in enumerate(m.time):
+                avg_time.append(1/(times/num_images[x]))
+            
+            plt.plot(num_images, avg_time, label = name_changer(m.file_name),marker="o")
+
+        plt.legend(bbox_to_anchor=(0.95, 0.1), loc='right', borderaxespad=0.)
+        plt.xlabel("Number of Images")
+        plt.ylabel("Throughput")
+        cont += 1
+
+    plt.show()
+
+
+def name_changer(name):
+    if name == "6785.bin":
+        return "Secuencial"
+    elif name == "6786.bin":
+        return "Heavy Process"
+    elif name == "6787.bin":
+        return "Pre-Heavy Process"
+    else:
+        return name
 
 if __name__ == "__main__":
-    chunk_size = 128
-    cycles = []
-    get_data("cycles.bin")
+    datman = Data_Manager()
+    datman.get_data("6785.bin")
+    datman.get_data("6786.bin")
+    datman.get_data("6787.bin")
 
-    timeArray = concat_time(extract_data(cycles,2))
-    print(timeArray)
-    
+    graph_data()
+
