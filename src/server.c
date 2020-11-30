@@ -40,7 +40,6 @@ int main(int argc, char **argv)
         receive_save_image(connfd, file_name);
 
         apply_filter(file_name);
-        // printf("thread terminó de hacer filtro sobel\n");
 
         //************* RESPUESTA AL CLIENTE
 
@@ -52,7 +51,6 @@ int main(int argc, char **argv)
             close(connfd);
             exit(1);
         }
-        // printf("Response sent, socked finished\n");
 
         //********************************************
         close(connfd); /* Close connection with client */

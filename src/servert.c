@@ -66,7 +66,7 @@ void *thread(void *vargp)
 
     pthread_mutex_lock(&lock);
     current_image_count = image_count;
-    // if (image_count < MAX_IMAGES)
+
     ++image_count;
     pthread_mutex_unlock(&lock);
 
@@ -75,7 +75,6 @@ void *thread(void *vargp)
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -87,7 +86,6 @@ void *thread(void *vargp)
         close(connfd);
         exit(1);
     }
-    // printf("Response sent, socked finished\n");
 
     //********************************************
 

@@ -98,12 +98,8 @@ def name_changer(name):
 
 if __name__ == "__main__":
     datman = Data_Manager()
-    # datman.get_data("test/6785.bin")
-    # datman.get_data("test/6786.bin")
-    # datman.get_data("test/6787.bin")
     _, _, filenames = next(walk(measurement_path), (None, None, []))
     for f_name in filenames:
         datman.get_data(measurement_path + f_name)
-        print(f_name)
 
     graph_data()

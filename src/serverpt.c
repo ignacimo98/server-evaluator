@@ -75,7 +75,7 @@ void *thread(void *arg)
 
     pthread_mutex_lock(&lock);
     current_image_count = image_count;
-    // if (image_count < MAX_IMAGES)
+
     ++image_count;
     pthread_mutex_unlock(&lock);
 
@@ -84,7 +84,6 @@ void *thread(void *arg)
     receive_save_image(connfd, file_name);
 
     apply_filter(file_name);
-    // printf("thread terminó de hacer filtro sobel\n");
 
     //************* RESPUESTA AL CLIENTE
 
@@ -96,23 +95,9 @@ void *thread(void *arg)
       close(connfd);
       exit(1);
     }
-    // printf("Response sent, socked finished\n");
 
     //********************************************
 
     close(connfd);
   }
 }
-
-// /* thread routine */
-// void *thread(void *vargp) {
-//   while (1) {
-//     int connfd = *((int *)vargp);
-//     // pthread_detach(pthread_self());
-//     free(vargp);
-//     // echo(connfd);
-//     receive_save_image(connfd);
-//     close(connfd);
-//   }
-//   return NULL;
-// }

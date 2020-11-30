@@ -70,7 +70,6 @@ int main(int argc, char **argv)
         }
         else
         {
-            // printf("Creado thread %d\n", i);
             i++;
         }
     }
@@ -80,7 +79,6 @@ int main(int argc, char **argv)
     while (i < thread_number)
     {
         pthread_join(tid[i++], NULL);
-        // printf("Numero: %d\n", i);
     }
 
     //  Stop clock
@@ -90,11 +88,8 @@ int main(int argc, char **argv)
     printf("Tiempo total: %f\n", elapsed);
 
     //  Create and write to bin file for report
-    // char port_c[8];
+
     char file_name[256];
-    // sprintf(port_c, "%d", port_number);
-    // strcat(file_name, port_c);
-    // strcat(file_name, ".bin");
 
     sprintf(file_name, "%s/%d.bin", MEASUREMENT_FOLDER, port_number);
 
@@ -162,7 +157,6 @@ void *thread_routine()
         struct stat st;
         stat(filename, &st);
         int filesize = st.st_size;
-        // printf("Size of file is %d \n", filesize);
 
         send_file(image_file, client_socket, filesize);
         close(image_file);
@@ -221,9 +215,9 @@ void wait_server_response(int client_socket)
     strcpy(done, "done");
     while ((n = recv(client_socket, buf, 5, 0)) > 0)
     {
+        // Response received, shuting down connection
         if (strcmp(buf, done) == 0)
         {
-            // printf("Response received, shuting down connection.\n");
             break;
         }
     }
