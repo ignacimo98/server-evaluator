@@ -225,5 +225,5 @@ kill $srv $srvt $srvtp
 echo "end"
 
 echo "---Starting Visualizer---"
-python visualizador/visual.py
+python3 visualizer/visual.py
 # wait
