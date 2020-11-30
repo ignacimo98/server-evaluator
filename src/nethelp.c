@@ -82,17 +82,20 @@ int readline(int fd, char *buf, int maxlen)
     return n + 1;
 }
 
+/*
+ * receive_save_image - reads image size and file from socket
+ * return void, creates image with given file_name
+ * return -1 if error
+ */
 void receive_save_image(int connfd, char *file_name)
 {
-    // pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-    // pthread_mutex_lock(&lock);
-
     size_t n;
     int total = 0;
     char buf[MAXLINE];
     FILE *image;
 
     image = fopen(file_name, "w");
+
     if (image == NULL)
     {
         // change it to end gracefully
@@ -124,17 +127,15 @@ void receive_save_image(int connfd, char *file_name)
             break;
         }
     }
-    // printf("Image size received: %d\n", value);
 
     //Receive Image from Client
     while ((n = recv(connfd, buf, MAXLINE, 0)) > 0)
     {
         total += n;
-        // printf("Server received %ld bytes, total is %d\n", n,total);
+
         fwrite(buf, 1, n, image);
         if (total >= value)
         {
-            // printf("Image is here\n");
             break;
         }
     }
